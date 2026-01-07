@@ -1,4 +1,4 @@
-# OpenDIF Core
+# Open Data Interchange Framework (OpenDIF)
 **_Secure Data Exchange Platform_**
 
 
@@ -7,7 +7,7 @@
 ![Security Scan](https://img.shields.io/github/actions/workflow/status/OpenDIF/opendif-core/security.yml)
 ![Last Commit](https://img.shields.io/github/last-commit/OpenDIF/opendif-core)
 
-**OpenDIF Core** is an open-source platform that transforms how organizations exchange data. Instead of dealing with multiple disconnected data sources, OpenDIF acts as an intelligent intermediary that provides a single, unified point of access. Whether you're a large company, university, or government agency, this framework simplifies complex data requests by automatically coordinating between data providers, handling authorization, managing consent, and aggregating results into a single response.
+**OpenDIF** is an open-source platform that transforms how organizations exchange data. Instead of dealing with multiple disconnected data sources, OpenDIF acts as an intelligent intermediary that provides a single, unified point of access. Whether you're a large company, university, or government agency, this framework simplifies complex data requests by automatically coordinating between data providers, handling authorization, managing consent, and aggregating results into a single response.
 
 <p align="center">
   •   <a href="#why-opendif">Why OpenDIF?</a> •
