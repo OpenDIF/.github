@@ -47,6 +47,11 @@ OpenDIF offers powerful capabilities that set it apart from traditional data exc
 
 ## Getting Started
 
+### Quick Start
+
+1. For detailed setup instructions, prerequisites, and deployment guides, please refer to [opendif-core](https://github.com/OpenDIF/opendif-core).
+2. To see OpenDIF in action, check out [opendif-farajaland](https://github.com/OpenDIF/opendif-farajaland), which demonstrates a complete deployment for a fictional country. 
+
 ### Minimum Requirements
 
 - **Go 1.21+** (for backend services)
@@ -64,10 +69,7 @@ Ensure you have the following installed:
 - [Docker Engine](https://docs.docker.com/engine/install/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Quick Start
 
-1. See [opendif-core](https://github.com/OpenDIF/opendif-core/blob/main/README.md)
-2. For a sample implementation, see [opendif-farajaland](https://github.com/OpenDIF/opendif-farajaland)
 
 ## Architecture
 
