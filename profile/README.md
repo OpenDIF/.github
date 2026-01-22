@@ -114,15 +114,14 @@ OpenDIF follows a microservices architecture with clear separation of concerns. 
   - Routes requests to Provider Data Sources
 - **API Gateway (Egress for Auxiliary Services)** - Gateway for auxiliary services to communicate externally (for monitoring and management tools)
 
-#### Core Services (Go)
-**Backend Services:**
+#### Backend Services (Go)
 - **Orchestration Engine** (Port 8080) - Data exchange workflow orchestration, GraphQL API, query federation and parallel data fetching. Coordinates with Secure Token
 - **Secure Token Service** - Part of Orchestration Engine. Manages secure tokens for external communication with data providers and handles JWT token generation and validation for egress requests
 - **Policy Decision Point** (Port 8082) - Field-level policy enforcement. Manages policy rules in the Policy Store
 - **Consent Engine** (Port 8081) - Consent management and workflow coordination. Validates consent before data access and manages consent records in the Consent Store
 - **Configuration Manager** (`portal-backend/`, Port 3000) - Backend API for Admin Portal and Member Portal. Handles schema submissions, application processing, and member management
 
-**Data Stores:**
+#### Data Stores
 - **Data Source & Applications Configuration** - Stores configuration details for data sources and applications (managed by Configuration Manager/Portal Backend)
 - **Consent Store** - Stores user consent records (managed by Consent Engine)
 - **Policy Store** - Stores policy rules and metadata (managed by Policy Decision Point)
