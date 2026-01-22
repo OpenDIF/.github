@@ -75,40 +75,74 @@ Ensure you have the following installed:
 
 ### System Overview
 
-OpenDIF follows a microservices architecture with clear separation of concerns:
+OpenDIF follows a microservices architecture with clear separation of concerns. The platform acts as an intermediary between external entities (Consumers, Providers, Application Users) and provides secure, policy-driven data exchange with comprehensive consent management.
 
-```
-Data Consumer → Orchestration Engine → Policy Decision Point (PDP)
-                     ↓
-              Consent Engine (CE) ← (if consent required)
-                     ↓
-              Data Provider(s)
-```
+<img width="1251" height="1291" alt="OpenDIF_Final drawio" src="https://github.com/user-attachments/assets/ef708d5b-1a24-49bf-a56b-6ded64babb65" />
 
-### Core Services
 
-**Backend Services (Go):**
-- **Orchestration Engine** (Port 8080) - Data exchange workflow orchestration, GraphQL API, query federation
-- **Policy Decision Point** (Port 8082) - ABAC authorization using Open Policy Agent (OPA)
-- **Consent Engine** (Port 8081) - Consent management and workflow coordination
-- **Portal Backend** (Port 3000) - Backend API for Admin Portal and Member Portal
+### External Entities
 
-**Frontend Portals (React/TypeScript):**
-- **Admin Portal** - Administrative dashboard for platform management
-- **Member Portal** - Interface for data providers and consumers
-- **Consent Portal** - Citizen-facing interface for consent management
+**External Actors:**
+- **Application Users** - End users who interact with consumer applications and manage their consent through the Consent Portal
+- **User IdP** - External Identity Provider that authenticates Application Users for consumer applications
+- **Consumers** - Organizations running applications that request data through OpenDIF
+  - **Consumer Applications** - Applications (e.g., Application 1, Application 2) that send data requests to OpenDIF
+- **Providers** - Organizations offering data sources
+  - **Data Sources** - External data systems (e.g., Data Source 1, Data Source 2) that provide data to OpenDIF
+- **OpenDIF Admin** - Administrative users who manage the platform through the Admin Portal
+- **OpenDIF Members** - Provider and Consumer organization representatives who manage their configurations through the Member Portal
 
-**Optional Components:**
+### OpenDIF System Components
+
+#### Portals (React/TypeScript)
+
+- **Consent Portal** - Citizen-facing interface for Application Users to manage their data consent preferences
+- **Admin Portal** - Administrative dashboard for OpenDIF Admins to manage platform-wide settings and configurations
+- **Member Portal** - Interface for OpenDIF Members (Providers and Consumers) to manage their data sources, applications, and configurations
+
+#### Identity Provider
+
+- **OpenDIF IdP** - Identity Provider that authenticates and manages identities within the OpenDIF system, handling authentication for portals and internal services
+
+#### Gateways
+
+- **API Gateway (Ingress)** - Primary entry point for external applications and portals into the OpenDIF system
+  - Routes requests from Consumer Applications, Consent Portal, Admin Portal, and Member Portal
+  - Forwards requests to internal services: OpenDIF IdP, Orchestration Engine, Configuration Manager, Consent Engine, Policy Decision Point, and Audit Service
+- **Egress Gateway** - Exit point for OpenDIF to communicate with external data sources
+  - Receives requests from Secure Token Service
+  - Routes requests to Provider Data Sources
+- **API Gateway (Egress for Auxiliary Services)** - Gateway for auxiliary services to communicate externally (for monitoring and management tools)
+
+#### Core Services (Go)
+**Backend Services:**
+- **Orchestration Engine** (Port 8080) - Data exchange workflow orchestration, GraphQL API, query federation and parallel data fetching. Coordinates with Secure Token
+- **Secure Token Service** - Part of Orchestration Engine. Manages secure tokens for external communication with data providers and handles JWT token generation and validation for egress requests
+- **Policy Decision Point** (Port 8082) - Field-level policy enforcement. Manages policy rules in the Policy Store
+- **Consent Engine** (Port 8081) - Consent management and workflow coordination. Validates consent before data access and manages consent records in the Consent Store
+- **Configuration Manager** (`portal-backend/`, Port 3000) - Backend API for Admin Portal and Member Portal. Handles schema submissions, application processing, and member management
+
+**Data Stores:**
+- **Data Source & Applications Configuration** - Stores configuration details for data sources and applications (managed by Configuration Manager/Portal Backend)
+- **Consent Store** - Stores user consent records (managed by Consent Engine)
+- **Policy Store** - Stores policy rules and metadata (managed by Policy Decision Point)
+
+#### Auxiliary Services
+
 - **Observability Stack** (`observability/`) - Metrics collection and visualization (Prometheus, Grafana)
 - **Audit Service** (`audit-service/`) - Audit logging and event tracking (services function normally without it)
-
+  
 ### Data Flow
 
-1. **Data Consumer Request**: Consumer sends GraphQL query to Orchestration Engine
-2. **Authorization Check**: Orchestration Engine queries Policy Decision Point for field-level permissions
-3. **Consent Verification**: If consent required, Orchestration Engine coordinates with Consent Engine
-4. **Data Federation**: Orchestration Engine splits query, fetches from multiple providers in parallel
-5. **Response Aggregation**: Results are merged and returned as unified GraphQL response
+1. **Data Consumer Request**: Consumer Application sends GraphQL query to Orchestration Engine via API Gateway (Ingress)
+2. **Authentication**: Request is authenticated through OpenDIF IdP
+3. **Authorization Check**: Orchestration Engine queries Policy Decision Point for field-level permissions
+4. **Consent Verification**: If consent is required, Orchestration Engine coordinates with Consent Engine to verify user consent
+5. **Configuration Lookup**: Orchestration Engine queries Configuration Manager for data source and application configurations
+6. **Token Generation**: Secure Token Service generates secure tokens for external provider communication
+7. **Data Federation**: Orchestration Engine splits query, and Secure Token Service routes requests through Egress Gateway to multiple Provider Data Sources in parallel
+8. **Response Aggregation**: Results are merged and returned as unified GraphQL response through API Gateway (Ingress)
+9. **Audit Logging**: All service interactions are logged to Audit Service for compliance tracking
 
 ### Open Source Components
 
@@ -139,6 +173,6 @@ For detailed documentation, see the `docs/` directory. Service-specific document
 - [Orchestration Engine](https://github.com/OpenDIF/opendif-core/tree/main/exchange/orchestration-engine/README.md)
 - [Policy Decision Point](https://github.com/OpenDIF/opendif-core/tree/main/exchange/policy-decision-point/README.md)
 - [Consent Engine](https://github.com/OpenDIF/opendif-core/tree/main/exchange/consent-engine/README.md)
-- [Portal Backend](https://github.com/OpenDIF/opendif-core/tree/main/portal-backend/README.md)
+- [Portal Backend (Configuration Manager)](https://github.com/OpenDIF/opendif-core/tree/main/portal-backend/README.md)
 - [Audit Service](https://github.com/OpenDIF/opendif-core/tree/main/audit-service/README.md)
 - [Observability Stack](https://github.com/OpenDIF/opendif-core/tree/main/observability/README.md)
